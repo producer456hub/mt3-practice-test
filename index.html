@@ -76,7 +76,8 @@
       <button id="start-btn" class="big-start">Start full test</button>
       <span id="pool-size" class="subtitle"></span>
     </div>
-    <div class="legend">After each question you'll see whether you were right and a short explanation. When the test ends, any questions you missed come back in repeat rounds until you've gotten every one correct.</div>
+    <div class="row" id="missed-row" style="margin-top:2px;"></div>
+    <div class="legend">After each question you'll see whether you were right and a short explanation. When the test ends, any questions you missed come back in repeat rounds until you've gotten every one correct. Missed questions are also saved on this device so you can come back and review just those.</div>
   </section>
 
   <section id="quiz-screen" class="card hidden">
@@ -129,6 +130,13 @@ const TOPICS = [
 ];
 let state = null;
 
+// persistent "missed" list across sessions: a question is here if you've
+// answered it wrong and not yet answered it correctly.
+const MISSED_KEY='mt3_missed_v1';
+let MISSED=new Set();
+try{ MISSED=new Set(JSON.parse(localStorage.getItem(MISSED_KEY)||'[]')); }catch(e){ MISSED=new Set(); }
+function saveMissed(){ try{ localStorage.setItem(MISSED_KEY, JSON.stringify(Array.from(MISSED))); }catch(e){} }
+
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
@@ -162,14 +170,37 @@ function startSession(){
   document.getElementById('q-grand').textContent=state.grand;
   show('quiz-screen'); renderQuestion();
 }
+function startMissedSession(){
+  let qs=ALL.filter(q=>MISSED.has(q.id));
+  if(!qs.length){ alert('No missed questions saved yet.'); return; }
+  const optorder=document.querySelector('input[name="optorder"]:checked').value;
+  shuffle(qs);
+  state={ optorder, grand:qs.length, mastered:new Set(), round:1,
+          queue:qs, idx:0, roundCorrect:0, wrong:[], answered:false, missedMode:true };
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('q-grand').textContent=state.grand;
+  show('quiz-screen'); renderQuestion();
+}
+function updateMissedBtn(){
+  const row=document.getElementById('missed-row'); if(!row) return;
+  const n=MISSED.size;
+  if(n===0){ row.innerHTML='<span class="subtitle">⭐ Miss a question and it\'s saved here so you can review just those later.</span>'; return; }
+  row.innerHTML=`<button id="review-missed-btn" style="background:#b45309">⭐ Review my ${n} missed question${n===1?'':'s'} →</button>`
+    +` <button id="clear-missed-btn" class="secondary">Clear list</button>`;
+  document.getElementById('review-missed-btn').addEventListener('click',startMissedSession);
+  document.getElementById('clear-missed-btn').addEventListener('click',()=>{
+    if(confirm('Clear your saved list of '+MISSED.size+' missed question(s)?')){ MISSED.clear(); saveMissed(); updateMissedBtn(); }
+  });
+}
 function show(id){ document.getElementById(id).classList.remove('hidden'); }
 function hideAll(){ ['setup','quiz-screen','round-screen','complete-screen'].forEach(id=>document.getElementById(id).classList.add('hidden')); }
-function resetToSetup(){ state=null; hideAll(); show('setup'); updatePoolSize(); }
+function resetToSetup(){ state=null; hideAll(); show('setup'); updatePoolSize(); updateMissedBtn(); }
 
 function renderQuestion(){
   const q=state.queue[state.idx];
-  document.getElementById('roundbar').textContent = state.round===1
-    ? `Round 1 — full test` : `Round ${state.round} — retrying missed questions`;
+  document.getElementById('roundbar').textContent = state.missedMode
+    ? (state.round===1 ? `⭐ Reviewing your missed questions` : `Round ${state.round} — still working through your misses`)
+    : (state.round===1 ? `Round 1 — full test` : `Round ${state.round} — retrying missed questions`);
   document.getElementById('q-index').textContent=state.idx+1;
   document.getElementById('q-total').textContent=state.queue.length;
   document.getElementById('q-score').textContent=state.roundCorrect;
@@ -198,8 +229,9 @@ function choose(btn,chosen,q){
   fb.innerHTML=`<div class="verdict">${ok?'✓ Correct':'✗ Not quite'}</div>`+
     (ok?'':`<div class="explain"><b>Answer:</b> ${esc(correct)}</div>`)+
     (q.explain?`<div class="explain">${esc(q.explain)}</div>`:'');
-  if(ok){ state.roundCorrect++; state.mastered.add(q.id); }
-  else { if(!state.wrong.some(w=>w.id===q.id)) state.wrong.push(q); state.mastered.delete(q.id); }
+  if(ok){ state.roundCorrect++; state.mastered.add(q.id); MISSED.delete(q.id); }
+  else { if(!state.wrong.some(w=>w.id===q.id)) state.wrong.push(q); state.mastered.delete(q.id); MISSED.add(q.id); }
+  saveMissed();
   document.getElementById('q-score').textContent=state.roundCorrect;
   document.getElementById('q-mastered').textContent=state.mastered.size;
   document.getElementById('next-btn').disabled=false;
@@ -232,16 +264,19 @@ function nextRound(){
 function showComplete(){
   hideAll(); show('complete-screen');
   const allDone = state.mastered.size===state.grand;
-  document.getElementById('done-title').textContent = allDone ? '🎉 Every question mastered!' : 'Session ended';
+  document.getElementById('done-title').textContent = allDone
+    ? (state.missedMode ? '⭐ Missed questions cleared!' : '🎉 Every question mastered!') : 'Session ended';
   document.getElementById('done-score').textContent = `${state.mastered.size} / ${state.grand}`;
   document.getElementById('done-msg').innerHTML = allDone
-    ? `You answered all ${state.grand} questions correctly across ${state.round} round${state.round===1?'':'s'}. Go ace that midterm! 💪`
-    : `You've mastered ${state.mastered.size} of ${state.grand}. Restart any time to finish the rest.`;
+    ? (state.missedMode
+        ? `You got all ${state.grand} of your missed questions right — your review list is now clear. 💪`
+        : `You answered all ${state.grand} questions correctly across ${state.round} round${state.round===1?'':'s'}. Go ace that midterm! 💪`)
+    : `You've mastered ${state.mastered.size} of ${state.grand}.`+(MISSED.size?` ${MISSED.size} question${MISSED.size===1?'':'s'} still saved in your missed list.`:'');
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
   if(!ALL.length){ document.getElementById('setup').innerHTML='<h2>questions.js failed to load.</h2>'; return; }
-  buildTopicChecks(); updatePoolSize();
+  buildTopicChecks(); updatePoolSize(); updateMissedBtn();
   document.getElementById('start-btn').addEventListener('click',startSession);
   document.getElementById('next-btn').addEventListener('click',next);
   document.getElementById('end-btn').addEventListener('click',()=>{ state.wrong=[]; showComplete(); });

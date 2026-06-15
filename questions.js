@@ -759,7 +759,64 @@ window.MT3_QUESTIONS = [
 {id:"j30",topic:"joints",q:"Osteoarthritis is best described as:",
  options:["Wear-and-tear degeneration of the articular cartilage","An autoimmune attack on muscle","Inflammation of a bursa","A torn ligament","A bacterial infection of bone","Loss of only the synovial membrane"],
  answer:"Wear-and-tear degeneration of the articular cartilage",
- explain:"Osteoarthritis is the 'wear-and-tear' breakdown of articular cartilage with age/use, exposing bone and causing pain."}
+ explain:"Osteoarthritis is the 'wear-and-tear' breakdown of articular cartilage with age/use, exposing bone and causing pain."},
+
+/* ===================== IMAGE QUESTIONS ===================== */
+
+{id:"bi61",topic:"bones",image:"images/fx_transverse.jpg",q:"Based on the image, what type of bone fracture is shown?",
+ options:["Transverse","Spiral","Comminuted","Impacted","Oblique","Greenstick"],
+ answer:"Transverse",
+ explain:"The break runs straight across the bone, perpendicular to its long axis — a transverse fracture."},
+
+{id:"bi62",topic:"bones",image:"images/fx_spiral.jpg",q:"Based on the image (note the twisting/rotational arrows), what type of bone fracture is shown?",
+ options:["Spiral","Transverse","Comminuted","Impacted","Oblique","Greenstick"],
+ answer:"Spiral",
+ explain:"The corkscrew break produced by a twisting force is a spiral fracture."},
+
+{id:"bi63",topic:"bones",image:"images/fx_comminuted.jpg",q:"Based on the image, what type of bone fracture is shown?",
+ options:["Comminuted","Transverse","Spiral","Impacted","Oblique","Greenstick"],
+ answer:"Comminuted",
+ explain:"The bone is shattered into several fragments between the main pieces — a comminuted fracture ('it's complicated')."},
+
+{id:"mi61",topic:"muscles",image:"images/skeletal_tissue.jpg",q:"Which type of muscle tissue is shown in this micrograph?",
+ options:["Skeletal muscle","Cardiac muscle","Smooth muscle","Nervous tissue","Epithelial tissue","Bone tissue"],
+ answer:"Skeletal muscle",
+ explain:"Long, parallel, unbranched fibers with obvious striations and peripheral nuclei are characteristic of skeletal muscle."},
+
+{id:"mi62",topic:"muscles",image:"images/cardiac_tissue.jpg",q:"Which type of muscle tissue is shown in this illustration?",
+ options:["Cardiac muscle","Skeletal muscle","Smooth muscle","Nervous tissue","Connective tissue","Epithelial tissue"],
+ answer:"Cardiac muscle",
+ explain:"Short, BRANCHED, striated cells with central nuclei joined end-to-end (by intercalated discs) are cardiac muscle — found only in the heart."},
+
+{id:"mi63",topic:"muscles",image:"images/smooth_tissue.jpg",q:"Which type of muscle tissue is shown in this illustration?",
+ options:["Smooth muscle","Skeletal muscle","Cardiac muscle","Nervous tissue","Epithelial tissue","Bone tissue"],
+ answer:"Smooth muscle",
+ explain:"Spindle-shaped (tapered) cells with a single central nucleus and NO striations are smooth muscle, found in the walls of hollow organs."},
+
+{id:"mi64",topic:"muscles",image:"images/nmj.jpg",q:"At this neuromuscular junction, what is structure A (the yellow fiber entering from the top)?",
+ options:["Motor neuron axon","Synaptic cleft","Muscle cell","Sarcoplasmic reticulum","Tendon","Myofibril"],
+ answer:"Motor neuron axon",
+ explain:"Structure A is the motor neuron axon carrying the action potential toward the muscle fiber."},
+
+{id:"mi65",topic:"muscles",image:"images/nmj.jpg",q:"At this neuromuscular junction, what is structure B (the swollen ending that contains vesicles and releases ACh)?",
+ options:["Axon terminal (terminal button)","Motor neuron axon","Synaptic cleft","Motor end-plate","Muscle fiber","Myofibril"],
+ answer:"Axon terminal (terminal button)",
+ explain:"Structure B is the axon terminal (terminal button) — its vesicles release acetylcholine into the synaptic cleft."},
+
+{id:"mi66",topic:"muscles",image:"images/nmj.jpg",q:"At this neuromuscular junction, what is structure C (the gap that the neurotransmitter must cross)?",
+ options:["Synaptic cleft","Axon terminal","Motor neuron axon","T-tubule","Myofibril","Sarcomere"],
+ answer:"Synaptic cleft",
+ explain:"Structure C is the synaptic cleft — the space ACh diffuses across to reach receptors on the muscle's motor end-plate."},
+
+{id:"mi67",topic:"muscles",image:"images/nmj.jpg",q:"At this neuromuscular junction, what is structure D (the large pink cell on the lower left)?",
+ options:["Muscle cell (muscle fiber)","Motor neuron","Axon terminal","Synaptic cleft","Schwann cell","Sarcoplasmic reticulum"],
+ answer:"Muscle cell (muscle fiber)",
+ explain:"Structure D is the muscle cell (muscle fiber); its membrane (the sarcolemma) holds the ACh receptors at the motor end-plate."},
+
+{id:"mi68",topic:"muscles",image:"images/nmj.jpg",q:"At this neuromuscular junction, structure E (the striated band along the bottom) is part of a:",
+ options:["Myofibril","Motor neuron","Synaptic cleft","Mitochondrion","T-tubule","Bursa"],
+ answer:"Myofibril",
+ explain:"Structure E is part of a myofibril — the striated contractile rod inside the muscle fiber."}
 
 ];
 
