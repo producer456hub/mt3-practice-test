@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Biol 40a — Midterm 3 Practice Test</title>
+<style>
+  :root{--bg:#f7f7f9;--card:#fff;--ink:#1a1a1a;--muted:#666;--accent:#4338ca;--accent-hover:#3730a3;
+    --good:#16a34a;--bad:#dc2626;--border:#e5e7eb;--bones:#0ea5e9;--muscles:#e11d48;--joints:#f59e0b;}
+  *{box-sizing:border-box;} body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);margin:0;padding:16px;line-height:1.45;}
+  .app{max-width:880px;margin:0 auto;} header{text-align:center;margin-bottom:14px;}
+  h1{margin:0 0 4px 0;font-size:23px;} .subtitle{color:var(--muted);font-size:13px;}
+  .setup,.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;
+    margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+  .setup h2{margin-top:0;font-size:18px;}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px;}
+  .checkbox-group,.radio-group{display:flex;flex-wrap:wrap;gap:10px;}
+  .checkbox-group label,.radio-group label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+    padding:7px 12px;border:1px solid var(--border);border-radius:7px;background:#f9fafb;font-size:14px;}
+  .checkbox-group .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  button{background:var(--accent);color:#fff;border:0;padding:11px 20px;border-radius:8px;font-size:15px;
+    font-weight:600;cursor:pointer;transition:background .15s;}
+  button:hover{background:var(--accent-hover);} button.secondary{background:#6b7280;}
+  button.secondary:hover{background:#4b5563;} button:disabled{background:#d1d5db;cursor:not-allowed;}
+  .big-start{font-size:16px;padding:13px 26px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px;flex-wrap:wrap;}
+  .topbar .score{font-size:14px;color:var(--muted);} .topbar .score strong{color:var(--ink);}
+  .roundbar{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+  .progress{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin-bottom:14px;}
+  .progress-fill{height:100%;background:var(--accent);transition:width .3s;}
+  .tag{display:inline-block;border-radius:999px;padding:2px 11px;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;margin-bottom:10px;color:#fff;}
+  .tag.bones{background:var(--bones);} .tag.muscles{background:var(--muscles);} .tag.joints{background:var(--joints);}
+  .q-img{max-width:100%;max-height:46vh;display:block;margin:0 auto 14px;border:1px solid var(--border);border-radius:8px;}
+  .question-text{font-size:17px;font-weight:600;margin:2px 0 14px 0;}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:640px){.options{grid-template-columns:1fr;}}
+  .option{background:#f9fafb;color:var(--ink);border:2px solid var(--border);border-radius:8px;padding:12px 14px;
+    cursor:pointer;text-align:left;font-size:14.5px;font-weight:500;transition:all .12s;display:flex;align-items:flex-start;gap:10px;}
+  .option .key{background:#e5e7eb;padding:2px 9px;border-radius:4px;font-size:12px;font-weight:700;color:var(--muted);
+    font-family:ui-monospace,Menlo,Consolas,monospace;flex:none;}
+  .option:hover:not(:disabled){border-color:var(--accent);background:#eef2ff;}
+  .option.correct{border-color:var(--good);background:#f0fdf4;color:var(--good);font-weight:600;}
+  .option.wrong{border-color:var(--bad);background:#fef2f2;color:var(--bad);font-weight:600;}
+  .option:disabled{cursor:default;opacity:.95;}
+  .feedback{margin-top:14px;padding:12px 15px;border-radius:8px;font-size:14px;}
+  .feedback .verdict{font-weight:700;font-size:15px;}
+  .feedback.correct{background:#f0fdf4;color:#14532d;border:1px solid #86efac;}
+  .feedback.wrong{background:#fef2f2;color:#7f1d1d;border:1px solid #fca5a5;}
+  .feedback .explain{margin-top:6px;color:#374151;font-weight:400;}
+  .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center;}
+  .complete{text-align:center;padding:26px;} .complete .big-score{font-size:46px;font-weight:800;color:var(--accent);margin:10px 0;}
+  .kbd-hint{color:var(--muted);font-size:12px;margin-top:12px;text-align:center;}
+  .legend{font-size:12px;color:var(--muted);margin-top:8px;}
+  .hidden{display:none!important;}
+  .pill{background:#eef2ff;color:var(--accent);border-radius:999px;padding:2px 10px;font-weight:700;font-size:12px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🦴 Biol 40a — Midterm 3 Practice Test</h1>
+    <div class="subtitle">Bones · Muscles · Joints — answer, see the explanation, and keep going until you've mastered every question</div>
+  </header>
+
+  <section id="setup" class="setup">
+    <h2>Build your test</h2>
+    <div class="row"><strong>Topics:</strong><div id="topic-checks" class="checkbox-group"></div></div>
+    <div class="row"><strong>Question order:</strong><div class="radio-group">
+      <label><input type="radio" name="order" value="shuffle" checked /> Shuffle</label>
+      <label><input type="radio" name="order" value="grouped" /> Grouped by topic</label></div></div>
+    <div class="row"><strong>Answer choices:</strong><div class="radio-group">
+      <label><input type="radio" name="optorder" value="shuffle" checked /> Shuffle each question</label>
+      <label><input type="radio" name="optorder" value="fixed" /> Keep written order</label></div></div>
+    <div class="row" style="margin-top:4px;">
+      <button id="start-btn" class="big-start">Start full test</button>
+      <span id="pool-size" class="subtitle"></span>
+    </div>
+    <div class="legend">After each question you'll see whether you were right and a short explanation. When the test ends, any questions you missed come back in repeat rounds until you've gotten every one correct.</div>
+  </section>
+
+  <section id="quiz-screen" class="card hidden">
+    <div id="roundbar" class="roundbar"></div>
+    <div class="topbar">
+      <div class="score">Q <strong id="q-index">1</strong> / <strong id="q-total">1</strong> · This round: <strong id="q-score">0</strong> correct</div>
+      <div class="score">Mastered: <strong id="q-mastered">0</strong> / <strong id="q-grand">0</strong></div>
+    </div>
+    <div class="progress"><div id="q-progress" class="progress-fill" style="width:0%"></div></div>
+    <div id="q-tag" class="tag"></div>
+    <img id="q-img" class="q-img hidden" alt="figure" />
+    <div id="q-question-text" class="question-text"></div>
+    <div id="q-options" class="options"></div>
+    <div id="q-feedback" class="feedback hidden"></div>
+    <div class="actions">
+      <button id="next-btn" disabled>Next →</button>
+      <button id="end-btn" class="secondary">End &amp; see results</button>
+    </div>
+    <div class="kbd-hint">Keys: 1–6 choose · Enter / Space next</div>
+  </section>
+
+  <section id="round-screen" class="card hidden">
+    <div class="complete">
+      <h2 id="round-title">Round complete</h2>
+      <div id="round-msg" class="subtitle" style="font-size:15px;margin:12px 0;"></div>
+      <div style="margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button id="round-continue">Retry the <span id="round-remaining"></span> you missed →</button>
+        <button id="round-stop" class="secondary">Stop here</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="complete-screen" class="card hidden">
+    <div class="complete">
+      <h2 id="done-title">🎉 All mastered!</h2>
+      <div id="done-score" class="big-score"></div>
+      <div id="done-msg" class="subtitle" style="font-size:15px;"></div>
+      <div style="margin-top:22px;"><button onclick="resetToSetup()">New test</button></div>
+    </div>
+  </section>
+</div>
+
+<script src="questions.js"></script>
+<script>
+const ALL = (window.MT3_QUESTIONS || []).slice();
+const TOPICS = [
+  {id:'bones', label:'Bones'},
+  {id:'muscles', label:'Muscles'},
+  {id:'joints', label:'Joints'},
+];
+let state = null;
+
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function buildTopicChecks(){
+  const wrap=document.getElementById('topic-checks'); wrap.innerHTML='';
+  TOPICS.forEach(t=>{
+    const n=ALL.filter(q=>q.topic===t.id).length;
+    const l=document.createElement('label');
+    l.innerHTML=`<input type="checkbox" value="${t.id}" checked /> <span class="dot" style="background:var(--${t.id})"></span> ${t.label} <span style="color:#888">(${n})</span>`;
+    wrap.appendChild(l);
+  });
+  wrap.addEventListener('change',updatePoolSize);
+}
+function selectedTopics(){ return new Set(Array.from(document.querySelectorAll('#topic-checks input:checked')).map(i=>i.value)); }
+function pool(){ const s=selectedTopics(); return ALL.filter(q=>s.has(q.topic)); }
+function updatePoolSize(){ const n=pool().length;
+  document.getElementById('pool-size').textContent=`(${n} questions)`;
+  document.getElementById('start-btn').textContent = n===ALL.length ? 'Start full test' : `Start (${n} questions)`;
+}
+
+function startSession(){
+  const order=document.querySelector('input[name="order"]:checked').value;
+  const optorder=document.querySelector('input[name="optorder"]:checked').value;
+  let qs=pool(); if(!qs.length){ alert('Pick at least one topic.'); return; }
+  qs=qs.slice();
+  if(order==='shuffle') shuffle(qs);
+  else { const rank={bones:0,muscles:1,joints:2}; qs.sort((a,b)=>(rank[a.topic]-rank[b.topic])); }
+  state={ optorder, grand:qs.length, mastered:new Set(), round:1,
+          queue:qs, idx:0, roundCorrect:0, wrong:[], answered:false };
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('q-grand').textContent=state.grand;
+  show('quiz-screen'); renderQuestion();
+}
+function show(id){ document.getElementById(id).classList.remove('hidden'); }
+function hideAll(){ ['setup','quiz-screen','round-screen','complete-screen'].forEach(id=>document.getElementById(id).classList.add('hidden')); }
+function resetToSetup(){ state=null; hideAll(); show('setup'); updatePoolSize(); }
+
+function renderQuestion(){
+  const q=state.queue[state.idx];
+  document.getElementById('roundbar').textContent = state.round===1
+    ? `Round 1 — full test` : `Round ${state.round} — retrying missed questions`;
+  document.getElementById('q-index').textContent=state.idx+1;
+  document.getElementById('q-total').textContent=state.queue.length;
+  document.getElementById('q-score').textContent=state.roundCorrect;
+  document.getElementById('q-mastered').textContent=state.mastered.size;
+  document.getElementById('q-progress').style.width=(100*state.idx/state.queue.length)+'%';
+  const tag=document.getElementById('q-tag'); tag.className='tag '+q.topic; tag.textContent=q.topic;
+  const img=document.getElementById('q-img');
+  if(q.image){ img.src=q.image; img.classList.remove('hidden'); } else { img.classList.add('hidden'); img.removeAttribute('src'); }
+  document.getElementById('q-question-text').textContent=q.q;
+  let opts=q.options.slice();
+  if(state.optorder==='shuffle') shuffle(opts);
+  const wrap=document.getElementById('q-options'); wrap.innerHTML='';
+  opts.forEach((opt,i)=>{ const b=document.createElement('button'); b.className='option'; b.dataset.text=opt;
+    b.innerHTML=`<span class="key">${i+1}</span><span>${esc(opt)}</span>`;
+    b.addEventListener('click',()=>choose(b,opt,q)); wrap.appendChild(b); });
+  const fb=document.getElementById('q-feedback'); fb.className='feedback hidden'; fb.innerHTML='';
+  state.answered=false; document.getElementById('next-btn').disabled=true;
+}
+function choose(btn,chosen,q){
+  if(state.answered) return; state.answered=true;
+  const correct=q.answer;
+  document.querySelectorAll('#q-options .option').forEach(o=>{ o.disabled=true;
+    if(o.dataset.text===correct) o.classList.add('correct'); else if(o===btn) o.classList.add('wrong'); });
+  const ok=chosen===correct;
+  const fb=document.getElementById('q-feedback'); fb.className='feedback '+(ok?'correct':'wrong');
+  fb.innerHTML=`<div class="verdict">${ok?'✓ Correct':'✗ Not quite'}</div>`+
+    (ok?'':`<div class="explain"><b>Answer:</b> ${esc(correct)}</div>`)+
+    (q.explain?`<div class="explain">${esc(q.explain)}</div>`:'');
+  if(ok){ state.roundCorrect++; state.mastered.add(q.id); }
+  else { if(!state.wrong.some(w=>w.id===q.id)) state.wrong.push(q); state.mastered.delete(q.id); }
+  document.getElementById('q-score').textContent=state.roundCorrect;
+  document.getElementById('q-mastered').textContent=state.mastered.size;
+  document.getElementById('next-btn').disabled=false;
+  document.getElementById('next-btn').focus();
+}
+function next(){
+  if(!state.answered) return;
+  state.idx++;
+  if(state.idx>=state.queue.length) endRound();
+  else renderQuestion();
+}
+function endRound(){
+  hideAll();
+  if(state.wrong.length===0){ showComplete(); return; }
+  // there are missed questions → offer a retry round
+  show('round-screen');
+  const miss=state.wrong.length;
+  document.getElementById('round-title').textContent=`Round ${state.round} done`;
+  document.getElementById('round-msg').innerHTML=
+    `You got <b>${state.roundCorrect}</b> / <b>${state.queue.length}</b> correct this round.<br>`+
+    `<span class="pill">${miss}</span> question${miss===1?'':'s'} still need another look — keep going to lock them in.`;
+  document.getElementById('round-remaining').textContent=miss;
+}
+function nextRound(){
+  state.round++;
+  state.queue=shuffle(state.wrong.slice());
+  state.idx=0; state.roundCorrect=0; state.wrong=[];
+  hideAll(); show('quiz-screen'); renderQuestion();
+}
+function showComplete(){
+  hideAll(); show('complete-screen');
+  const allDone = state.mastered.size===state.grand;
+  document.getElementById('done-title').textContent = allDone ? '🎉 Every question mastered!' : 'Session ended';
+  document.getElementById('done-score').textContent = `${state.mastered.size} / ${state.grand}`;
+  document.getElementById('done-msg').innerHTML = allDone
+    ? `You answered all ${state.grand} questions correctly across ${state.round} round${state.round===1?'':'s'}. Go ace that midterm! 💪`
+    : `You've mastered ${state.mastered.size} of ${state.grand}. Restart any time to finish the rest.`;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  if(!ALL.length){ document.getElementById('setup').innerHTML='<h2>questions.js failed to load.</h2>'; return; }
+  buildTopicChecks(); updatePoolSize();
+  document.getElementById('start-btn').addEventListener('click',startSession);
+  document.getElementById('next-btn').addEventListener('click',next);
+  document.getElementById('end-btn').addEventListener('click',()=>{ state.wrong=[]; showComplete(); });
+  document.getElementById('round-continue').addEventListener('click',nextRound);
+  document.getElementById('round-stop').addEventListener('click',showComplete);
+  document.addEventListener('keydown',e=>{
+    if(!state) return;
+    if(!document.getElementById('quiz-screen').classList.contains('hidden')){
+      if(!state.answered && /^[1-6]$/.test(e.key)){ const o=document.querySelectorAll('#q-options .option')[+e.key-1]; if(o)o.click(); }
+      else if((e.key==='Enter'||e.key===' ') && state.answered){ e.preventDefault(); next(); }
+    } else if(!document.getElementById('round-screen').classList.contains('hidden')){
+      if(e.key==='Enter') nextRound();
+    }
+  });
+});
+</script>
+</body>
+</html>

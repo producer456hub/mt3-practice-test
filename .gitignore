@@ -1,0 +1,6 @@
+.DS_Store
+Thumbs.db
+_chk.js
+_tmp/
+*.bak
+_proof_dump.txt
