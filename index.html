@@ -69,9 +69,6 @@
     <div class="row"><strong>Question order:</strong><div class="radio-group">
       <label><input type="radio" name="order" value="shuffle" checked /> Shuffle</label>
       <label><input type="radio" name="order" value="grouped" /> Grouped by topic</label></div></div>
-    <div class="row"><strong>Answer choices:</strong><div class="radio-group">
-      <label><input type="radio" name="optorder" value="shuffle" checked /> Shuffle each question</label>
-      <label><input type="radio" name="optorder" value="fixed" /> Keep written order</label></div></div>
     <div class="row" style="margin-top:4px;">
       <button id="start-btn" class="big-start">Start full test</button>
       <span id="pool-size" class="subtitle"></span>
@@ -136,6 +133,10 @@ const MISSED_KEY='mt3_missed_v1';
 let MISSED=new Set();
 try{ MISSED=new Set(JSON.parse(localStorage.getItem(MISSED_KEY)||'[]')); }catch(e){ MISSED=new Set(); }
 function saveMissed(){ try{ localStorage.setItem(MISSED_KEY, JSON.stringify(Array.from(MISSED))); }catch(e){} }
+// drop any saved ids that no longer exist in the current question set
+(function(){ const valid=new Set(ALL.map(q=>q.id)); let changed=false;
+  MISSED.forEach(id=>{ if(!valid.has(id)){ MISSED.delete(id); changed=true; } });
+  if(changed) saveMissed(); })();
 
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
@@ -159,12 +160,11 @@ function updatePoolSize(){ const n=pool().length;
 
 function startSession(){
   const order=document.querySelector('input[name="order"]:checked').value;
-  const optorder=document.querySelector('input[name="optorder"]:checked').value;
   let qs=pool(); if(!qs.length){ alert('Pick at least one topic.'); return; }
   qs=qs.slice();
   if(order==='shuffle') shuffle(qs);
   else { const rank={bones:0,muscles:1,joints:2}; qs.sort((a,b)=>(rank[a.topic]-rank[b.topic])); }
-  state={ optorder, grand:qs.length, mastered:new Set(), round:1,
+  state={ grand:qs.length, mastered:new Set(), round:1,
           queue:qs, idx:0, roundCorrect:0, wrong:[], answered:false };
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('q-grand').textContent=state.grand;
@@ -173,9 +173,8 @@ function startSession(){
 function startMissedSession(){
   let qs=ALL.filter(q=>MISSED.has(q.id));
   if(!qs.length){ alert('No missed questions saved yet.'); return; }
-  const optorder=document.querySelector('input[name="optorder"]:checked').value;
   shuffle(qs);
-  state={ optorder, grand:qs.length, mastered:new Set(), round:1,
+  state={ grand:qs.length, mastered:new Set(), round:1,
           queue:qs, idx:0, roundCorrect:0, wrong:[], answered:false, missedMode:true };
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('q-grand').textContent=state.grand;
@@ -210,8 +209,7 @@ function renderQuestion(){
   const img=document.getElementById('q-img');
   if(q.image){ img.src=q.image; img.classList.remove('hidden'); } else { img.classList.add('hidden'); img.removeAttribute('src'); }
   document.getElementById('q-question-text').textContent=q.q;
-  let opts=q.options.slice();
-  if(state.optorder==='shuffle') shuffle(opts);
+  const opts=shuffle(q.options.slice());
   const wrap=document.getElementById('q-options'); wrap.innerHTML='';
   opts.forEach((opt,i)=>{ const b=document.createElement('button'); b.className='option'; b.dataset.text=opt;
     b.innerHTML=`<span class="key">${i+1}</span><span>${esc(opt)}</span>`;
